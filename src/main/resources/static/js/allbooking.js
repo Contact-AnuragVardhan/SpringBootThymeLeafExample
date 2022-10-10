@@ -44,14 +44,14 @@ function renderBookingTable(data) {
 	}
 }
 
-function deleteBooking(booking,event) {
+function deleteBooking(id,event) {
 	event.preventDefault();
 	fetch("http://localhost:8080/booking/delete",{
 			method:"POST",
 			headers: {
 				'Content-Type':'application/json'
 			},
-			body: JSON.stringify({id: booking.id})
+			body: JSON.stringify({id: id})
 	})
 	.then((response) => response.json())
 	.then((data) => {

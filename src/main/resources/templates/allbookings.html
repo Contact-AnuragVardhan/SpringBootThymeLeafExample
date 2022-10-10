@@ -83,7 +83,7 @@
 				<tbody id="tblBookingBody">
 					<tr th:each="booking: ${bookingList}">
 						<td>
-							<a href="javascript:void(0)" th:onclick="@{'deleteBooking(convertBookingToObject(\'' + ${booking.toString()} + '\'),event);'}">Cancel</a>
+							<a href="javascript:void(0)" th:onclick="@{'deleteBooking(' + ${booking.id} + ',event);'}">Cancel</a>
 						</td>
 						<td th:text="${booking.airline.airlineName}"></td>
 						<td th:text="${booking.hotel.hotelName}"></td>
