@@ -3,6 +3,7 @@ package com.jasvindersingh.airlinebookingsystem.controllers;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -34,13 +35,15 @@ public class HotelController {
 	private IHotelService hotelService;
 	
 	@PostMapping("/save")
-	public ModelAndView save(@Valid @ModelAttribute("hotel") Hotel hotel,BindingResult result) throws AppException {
+	public ModelAndView save(@Valid @ModelAttribute("hotel") Hotel hotel,BindingResult result,HttpSession session) throws AppException {
 		logger.info("In Hotel save method with Hotel " + hotel);
 		try {
 			if (result.hasErrors()) {
 				ModelAndView mav = new ModelAndView(AppConstants.PAGE_HOTEL);
 				mav.addObject("result", result);
 				mav.addObject("hotel",hotel);
+				mav.addObject("loggedUser", session.getAttribute("user"));
+				mav.addObject("isAdmin", session.getAttribute("isAdmin"));
 				return mav;
 	        }
 			hotel = hotelService.save(hotel);
@@ -48,6 +51,8 @@ public class HotelController {
 			ModelAndView mav = new ModelAndView(AppConstants.PAGE_HOTEL);
 			mav.addObject("hotel",new Hotel());
 			mav.addObject("hotelList",lst);
+			mav.addObject("loggedUser", session.getAttribute("user"));
+			mav.addObject("isAdmin", session.getAttribute("isAdmin"));
 			return mav;
 		}
 		catch(AppException e) {

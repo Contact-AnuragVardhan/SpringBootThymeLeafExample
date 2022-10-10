@@ -3,6 +3,7 @@ package com.jasvindersingh.airlinebookingsystem.controllers;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -37,13 +38,15 @@ public class AirlineController {
 	private IAirlineService airlineService;
 	
 	@PostMapping("/save")
-	public ModelAndView save(@Valid @ModelAttribute("airline") Airline airline,BindingResult result) throws AppException {
+	public ModelAndView save(@Valid @ModelAttribute("airline") Airline airline,BindingResult result,HttpSession session) throws AppException {
 		logger.info("In airlines save method with airline " + airline);
 		try {
 			if (result.hasErrors()) {
 				ModelAndView mav = new ModelAndView(AppConstants.PAGE_AIRLINE);
 				mav.addObject("result", result);
 				mav.addObject("airline",airline);
+				mav.addObject("loggedUser", session.getAttribute("user"));
+				mav.addObject("isAdmin", session.getAttribute("isAdmin"));
 				return mav;
 	        }
 			airline = airlineService.save(airline);
@@ -51,6 +54,8 @@ public class AirlineController {
 			ModelAndView mav = new ModelAndView(AppConstants.PAGE_AIRLINE);
 			mav.addObject("airline",new Airline());
 			mav.addObject("airlineList",lst);
+			mav.addObject("loggedUser", session.getAttribute("user"));
+			mav.addObject("isAdmin", session.getAttribute("isAdmin"));
 			logger.info("airlines save method ends");
 			return mav;
 		}

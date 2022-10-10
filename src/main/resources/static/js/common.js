@@ -5,3 +5,7 @@ function convertPojoToObject(strPojo,replaceStr) {
 	//console.log(objData,objData.id);
 	return objData;
 }
+
+function logoutClick(event) {
+	alert("here");
+}

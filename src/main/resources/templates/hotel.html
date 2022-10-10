@@ -15,17 +15,19 @@
 </style>
 </head>
 <body>
-	<!--  <nav>
-		<div class="logo">
-		   <b>Welcome to Himalayas TourGuide</b>
-		</div>
-		<ul>
-		   <li><a href="index.html">HOME</a></li>
-		   <li><a href="employeeRegistration.html">Customer Registration</a></li>
-		   <li><a class="active" href="registration.html">Tour Form</a></li>
-		   <li><a href="places.html">Show visted Places </a></li>
-		</ul>
-	 </nav>-->
+	<div class="topnav">
+		<div class="left">
+	        <a th:href="@{/home}">Home</a>
+	        <a th:href="@{/booking}">Booking</a>
+	        <a th:href="@{/allbookings}">All Bookings</a>
+	        <a th:href="@{/airline}">Airline</a>
+	        <a class="active" th:href="@{/hotel}">Hotel</a>
+	    </div>
+	    <div class="right">
+		  	<span>Welcome <b th:text="${loggedUser.name}"></b></span>
+		  	<a href="#about" class="right" th:href="@{/logout}">Logout</a>
+	    </div>
+    </div>
 	 <div class="container">
 		<div class="wrapper">		
 			<div class="form_container">

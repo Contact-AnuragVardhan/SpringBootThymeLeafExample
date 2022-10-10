@@ -61,6 +61,8 @@ public class BookingController {
 		session.setAttribute("currentBooking", booking);
 		Map<String,String> mapRes = new HashMap<String,String>();
 		mapRes.put("page",AppConstants.PAGE_ALL_BOOKING);
+		mav.addObject("loggedUser", session.getAttribute("user"));
+		mav.addObject("isAdmin", session.getAttribute("isAdmin"));
 		return mapRes;
 	}
 	
@@ -88,6 +90,8 @@ public class BookingController {
 			ModelAndView mav = new ModelAndView(AppConstants.PAGE_ALL_BOOKING);
 			mav.addObject("booking",new Booking());
 			mav.addObject("bookingList",lst);
+			mav.addObject("loggedUser", session.getAttribute("user"));
+			mav.addObject("isAdmin", session.getAttribute("isAdmin"));
 			return mav;
 		}
 		catch(AppException e) {

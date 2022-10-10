@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.jasvindersingh.airlinebookingsystem.constants.AppConstants;
@@ -49,39 +50,71 @@ public class AppController {
 	}
 	
 	@RequestMapping(value="/hotel")
-	public String hotel(Model model) throws AppException {
-		List<Hotel> lst = hotelService.getAll();
-		model.addAttribute("hotel",new Hotel());
-		model.addAttribute("hotelList",lst);
-		return AppConstants.PAGE_HOTEL;
+	public String hotel(Model model,HttpSession session) throws AppException {
+		if(session.getAttribute("user") != null) {
+			List<Hotel> lst = hotelService.getAll();
+			model.addAttribute("hotel",new Hotel());
+			model.addAttribute("hotelList",lst);
+			model.addAttribute("loggedUser", session.getAttribute("user"));
+			model.addAttribute("isAdmin", session.getAttribute("isAdmin"));
+			return AppConstants.PAGE_HOTEL;
+		}
+		return ("forward:/" + AppConstants.PAGE_LOGIN);
 	}
 	
 	@RequestMapping(value="/airline")
-	public String airline(Model model) throws AppException {
-		List<Airline> lst = airlineService.getAll();
-		model.addAttribute("airline",new Airline());
-		model.addAttribute("airlineList",lst);
-		return AppConstants.PAGE_AIRLINE;
+	public String airline(Model model,HttpSession session) throws AppException {
+		if(session.getAttribute("user") != null) {
+			List<Airline> lst = airlineService.getAll();
+			model.addAttribute("airline",new Airline());
+			model.addAttribute("airlineList",lst);
+			model.addAttribute("loggedUser", session.getAttribute("user"));
+			model.addAttribute("isAdmin", session.getAttribute("isAdmin"));
+			return AppConstants.PAGE_AIRLINE;
+		}
+		return ("forward:/" + AppConstants.PAGE_LOGIN);
 	}
 	
 	@RequestMapping(value="/booking")
-	public String newbooking(Model model) {
-		return AppConstants.PAGE_BOOKING;
+	public String newbooking(Model model,HttpSession session) {
+		if(session.getAttribute("user") != null) {
+			model.addAttribute("loggedUser", session.getAttribute("user"));
+			model.addAttribute("isAdmin", session.getAttribute("isAdmin"));
+			return AppConstants.PAGE_BOOKING;
+		}
+		return ("forward:/" + AppConstants.PAGE_LOGIN);
 	}
 	
 	@RequestMapping(value="/allbookings")
 	public ModelAndView bookings(HttpSession session ) throws AppException {
-		ModelAndView mav = new ModelAndView(AppConstants.PAGE_ALL_BOOKING);
-		if(session.getAttribute("currentBooking") != null) {
-			mav.addObject("booking", (Booking)session.getAttribute("currentBooking"));
-			//session.removeAttribute("currentBooking");
+		if(session.getAttribute("user") != null) {
+			ModelAndView mav = new ModelAndView(AppConstants.PAGE_ALL_BOOKING);
+			if(session.getAttribute("currentBooking") != null) {
+				mav.addObject("booking", (Booking)session.getAttribute("currentBooking"));
+				//session.removeAttribute("currentBooking");
+			}
+			else {
+				mav.addObject("booking",new Booking());
+			}
+			User user = (User)session.getAttribute("user");
+			List<Booking> lst = bookingService.getAllByUserID(user.getId());
+			mav.addObject("bookingList",lst);
+			mav.addObject("loggedUser", session.getAttribute("user"));
+			mav.addObject("isAdmin", session.getAttribute("isAdmin"));
+			return mav;
 		}
-		else {
-			mav.addObject("booking",new Booking());
-		}
-		User user = (User)session.getAttribute("user");
-		List<Booking> lst = bookingService.getAllByUserID(user.getId());
-		mav.addObject("bookingList",lst);
+		ModelAndView mav = new ModelAndView(AppConstants.PAGE_LOGIN);
+		mav.addObject("user",new User());
 		return mav;
+	}
+	
+	@RequestMapping(value="/logout", method = RequestMethod.GET)
+	public String logout(HttpSession session) {
+		if(session.getAttribute("user") != null) {
+			session.removeAttribute("user");
+			session.removeAttribute("isAdmin");
+			session.removeAttribute("roles");
+		}
+		return ("forward:/" + AppConstants.PAGE_INDEX);
 	}
 }
